@@ -1,3 +1,17 @@
+/* Only branding & overrides added afetr bootstrap implementation */
+body {
+  background-color: #f8f9fa;
+}
+
+h1 {
+  margin-bottom: 1rem;
+}
+
+
+
+
+
+/* Original before bootstrap
 body {
   font-family: system-ui, Arial, sans-serif;
   margin: 2rem;
@@ -35,4 +49,4 @@ header {
   padding: 1rem;
   border-radius: 6px;
   margin-bottom: 2rem;
-}
+}*/

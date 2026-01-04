@@ -11,7 +11,7 @@ function renderMeta(meta) {
     `Last updated: ${new Date(meta.generated_at).toLocaleString()}`;
 }
 
-function renderKPIs(kpis) {
+/*function renderKPIs(kpis) {
   const container = document.getElementById('kpis');
   container.innerHTML = '';
 
@@ -23,6 +23,25 @@ function renderKPIs(kpis) {
       <div class="kpi-value">${kpi.value.toLocaleString()}</div>
     `;
     container.appendChild(div);
+  });
+}*/
+
+function renderKPIs(kpis) {
+  const container = document.getElementById('kpis');
+  container.innerHTML = '';
+
+  kpis.forEach(kpi => {
+    const col = document.createElement('div');
+    col.className = 'col-12 col-sm-6 col-lg-3';
+
+    col.innerHTML = `
+      <div class="border rounded p-3 h-100">
+        <div class="text-muted small">${kpi.label}</div>
+        <div class="fs-3 fw-bold">${kpi.value.toLocaleString()}</div>
+      </div>
+    `;
+
+    container.appendChild(col);
   });
 }
 
@@ -54,3 +73,6 @@ function renderLineWidget(widget, container) {
   div.appendChild(list);
   container.appendChild(div);
 }
+
+
+
