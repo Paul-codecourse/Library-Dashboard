@@ -1,0 +1,38 @@
+body {
+  font-family: system-ui, Arial, sans-serif;
+  margin: 2rem;
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+#kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.kpi {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.kpi-label {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.widget {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+}
