@@ -1,35 +1,30 @@
 {
   "meta": {
-    "generated_at": "2026-01-03T02:15:00Z",
-    "academic_year": "2025–26"
+    "generated_at": "2026-01-29T23:19:59.607Z",
+    "source": "Koha CSV Email",
+    "schema_version": 1
   },
   "kpis": [
     {
       "id": "total_loans",
       "label": "Total Loans",
-      "value": 184320
+      "value": 1000
     },
     {
       "id": "active_borrowers",
       "label": "Active Borrowers",
-      "value": 12408
+      "value": 100
     },
     {
-      "id": "never_borrowed",
-      "label": "Items Never Borrowed",
-      "value": 6842
+      "id": "loans_per_active_borrower",
+      "label": "Loans Per Active Borrower",
+      "value": 10
+    },
+    {
+      "id": "renewals_count",
+      "label": "Renewals Count",
+      "value": 200
     }
   ],
-  "widgets": [
-    {
-      "id": "loans_by_month",
-      "type": "line",
-      "title": "Loans by Month",
-      "data": [
-        { "month": "Sep", "value": 31240 },
-        { "month": "Oct", "value": 35610 },
-        { "month": "Nov", "value": 33890 }
-      ]
-    }
-  ]
+  "widgets": []
 }

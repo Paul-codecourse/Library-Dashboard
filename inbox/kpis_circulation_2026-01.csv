@@ -1,0 +1,5 @@
+metric,value,period_start,period_end,notes
+total_loans,1000,2026-01-01,2026-01-31,
+active_borrowers,100,2026-01-01,2026-01-31,
+loans_per_active_borrower,10,2026-01-01,2026-01-31,
+renewals_count,200,2026-01-01,2026-01-31,
