@@ -10,6 +10,11 @@ const TEMP_OUTPUT = './public/dashboard.tmp.json';
 
 /* ---------- helpers ---------- */
 
+function extractPeriod(filename) {
+  const match = filename.match(/_(\d{4}-\d{2})\.csv$/);
+  return match ? match[1] : null;
+}
+
 async function readCSV(filePath) {
   const text = await readFile(filePath, 'utf8');
   return parse(text, {
@@ -17,6 +22,19 @@ async function readCSV(filePath) {
     skip_empty_lines: true,
     trim: true
   });
+}
+
+async function loadKPIsByFile(file) {
+  const rows = parse(
+    await readFile(path.join(INBOX, file), 'utf8'),
+    { columns: true, skip_empty_lines: true }
+  );
+
+  return rows.map(r => ({
+    id: r.metric,
+    value: Number(r.value),
+    period_end: r.period_end
+  }));
 }
 
 
@@ -33,7 +51,23 @@ function latestFile(prefix) {
 /* ---------- KPI loaders ---------- */
 
 async function loadCirculationKPIs() {
-  const file = await latestFile('kpis_circulation_');
+  
+  const currentFile = await latestFile('kpis_circulation_');
+if (!currentFile) return [];
+
+const period = extractPeriod(currentFile);      // e.g. 2026-01
+const previousPeriod = `${Number(period.slice(0,4)) - 1}${period.slice(4)}`;
+const previousFile = `kpis_circulation_${previousPeriod}.csv`;
+
+const currentRows = await loadKPIsByFile(currentFile);
+let previousRows = null;
+
+try {
+  previousRows = await loadKPIsByFile(previousFile);
+} catch {
+  previousRows = null;
+}
+
   if (!file) return [];
 
   const rows = parse(
@@ -47,6 +81,31 @@ async function loadCirculationKPIs() {
     value: Number(r.value)
   }));
 }
+
+function attachYoY(current, previous) {
+  if (!previous) return current;
+
+  const prev = previous.value;
+  const curr = current.value;
+
+  if (prev === 0) return current;
+
+  return {
+    ...current,
+    comparison: {
+      previous_value: prev,
+      change: curr - prev,
+      change_pct: ((curr - prev) / prev) * 100,
+      period: previous.period_end
+    }
+  };
+}
+
+return currentRows.map(curr => {
+  const prev = previousRows?.find(p => p.id === curr.id);
+  return attachYoY(curr, prev);
+});
+
 
 async function loadCollectionKPIs() {
   const file = await latestFile('collection_metrics_');
@@ -104,7 +163,7 @@ async function loadEquityWidgets() {
   return widgets;
 }
 
-async function loadPerformanceWidgets() {
+async function loadPerformanceKPIs() {
   const file = await latestFile('performance_');
   if (!file) return [];
 
@@ -120,13 +179,46 @@ async function loadPerformanceWidgets() {
   }));
 }
 
+async function loadKPIsForPeriod(prefix, period) {
+  const file = `kpis_circulation_${period}.csv`;
+  try {
+    const rows = parse(
+      await readFile(path.join(INBOX, file), 'utf8'),
+      { columns: true, skip_empty_lines: true }
+    );
+    return rows;
+  } catch {
+    return null;
+  }
+}
+
+function attachComparison(current, previous) {
+  if (!previous) return current;
+
+  const prevValue = Number(previous.value);
+  const currValue = Number(current.value);
+
+  return {
+    ...current,
+    comparison: {
+      previous_value: prevValue,
+      change: currValue - prevValue,
+      change_pct: prevValue === 0
+        ? null
+        : ((currValue - prevValue) / prevValue * 100),
+      period: previous.period_end
+    }
+  };
+}
+
+
 /* ---------- main ---------- */
 
 async function buildDashboard() {
   const kpis = [
     ...(await loadCirculationKPIs()),
     ...(await loadCollectionKPIs()),
-    ...(await loadPerformanceWidgets())
+    ...(await loadPerformanceKPIs())
   ];
 
   const widgets = [

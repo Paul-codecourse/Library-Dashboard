@@ -36,3 +36,9 @@ header {
   border-radius: 6px;
   margin-bottom: 2rem;
 }
+
+.kpi-comparison {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.25rem;
+}

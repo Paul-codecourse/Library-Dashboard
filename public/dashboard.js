@@ -1,10 +1,21 @@
 fetch('dashboard.json')
   .then(res => res.json())
   .then(data => {
+    window.dashboardData = data;
     renderMeta(data.meta);
     renderKPIs(data.kpis);
     renderWidgets(data.widgets);
   });
+
+let showComparison = false;
+
+document
+  .getElementById('toggle-comparison')
+  .addEventListener('change', e => {
+    showComparison = e.target.checked;
+    renderKPIs(window.dashboardData.kpis);
+  });
+
 
 function renderMeta(meta) {
   document.getElementById('last-updated').textContent =
@@ -19,12 +30,38 @@ function renderKPIs(kpis) {
     const div = document.createElement('div');
     div.className = 'kpi';
     div.innerHTML = `
-      <div class="kpi-label">${kpi.label}</div>
-      <div class="kpi-value">${kpi.value.toLocaleString()}</div>
-    `;
-    container.appendChild(div);
-  });
-}
+  <div class="kpi-label">${kpi.label}</div>
+  <div class="kpi-value">${kpi.value.toLocaleString()}</div>
+  ${
+    showComparison && kpi.comparison
+      ? `<div class="kpi-comparison">
+           ${kpi.comparison.change >= 0 ? '▲' : '▼'}
+           ${kpi.comparison.change_pct.toFixed(1)}%
+           vs last year
+         </div>`
+      : ''
+  }
+`;
+
+const COMPARABLE_KPIS = new Set([
+  'total_loans',
+  'active_borrowers',
+  'holds_placed',
+  'new_items_added'
+]);
+
+showComparison &&
+kpi.comparison &&
+COMPARABLE_KPIS.has(kpi.id)
+
+
+//     div.innerHTML = `
+//       <div class="kpi-label">${kpi.label}</div>
+//       <div class="kpi-value">${kpi.value.toLocaleString()}</div>
+//     `;
+//     container.appendChild(div);
+//   });
+// }
 
 function renderWidgets(widgets) {
   const container = document.getElementById('widgets');
